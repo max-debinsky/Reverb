@@ -62,3 +62,5 @@ client.on("interactionCreate", async interaction => {
         await interaction.reply("An error occurred while executing that command.");
     }
 });
+
+client.login(process.env.TOKEN);
