@@ -1,4 +1,4 @@
-const {SlashCommandBuilder} = require("@discordjs/builders");
+const {SlashCommandBuilder, EmbedBuilder} = require("@discordjs/builders");
 const {MessageEmbed} = require("discord.js");
 const {QueryType} = require("discord-player");
 
@@ -7,49 +7,49 @@ module.exports = {
     .setName("play")
     .setDescription("Plays a song.")
     .addSubcommand(subcommand => {
-        subcommand
+        return subcommand
         .setName("search")
         .setDescription("Searches for a song.")
         .addStringOption(option => {
-            option
+            return option
             .setName("searchterms")
             .setDescription("search keywords")
             .setRequired(true);
         })
     })
     .addSubcommand(subcommand => {
-        subcommand
+        return subcommand
         .setName("playlist")
         .setDescription("Plays playlist from YT.")
         .addStringOption(option => {
-            option
+            return option
             .setName("url")
             .setDescription("url of the playlist")
             .setRequired(true);
         })
     })
     .addSubcommand(subcommand => {
-        subcommand
+        return subcommand
         .setName("song")
         .setDescription("Plays song from YT.")
         .addStringOption(option => {
-            option
+            return option
             .setName("url")
             .setDescription("url of the song")
             .setRequired(true);
         })
     }),
     execute: async ({client, interaction}) => {
-        if(!interaction.memeber.voice.channel) {
+        if(!interaction.member.voice.channel) {
             await interaction.reply("You must be in a voice channel to use this command.");
             return;
         }
 
-        const queue = await client.player.createQueue(interaction.guild);
+        const queue = await client.player.nodes.create(interaction.guild);
+        
+        if(!queue.connection) await queue.connect(interaction.member.voice.channel);
 
-        if(!queue.connection) await queue.connect(interaction.memeber.voice.channel)
-
-        let embed = new MessageEmbed();
+        let embed = new EmbedBuilder();
         if(interaction.options.getSubcommand() === "song") {
             let url = interaction.options.getString("url");
 
@@ -106,12 +106,12 @@ module.exports = {
             }
 
             const song = result.tracks[0];
-            await queue.addTracks(song);
+            await queue.addTrack(song);
 
             embed
-            .setDescription(`Added **${song.title}** to the queue.`)
-            .setThumbnail(song.thumbnail)
-            .setFooter({text: `Duration: ${song.duration}`});
+            .setDescription(`Added **** to the queue.`)
+            ///.setThumbnail(song.thumbnail)
+            .setFooter({text: `Duration: `});
         }
 
         if(!queue.playing) await queue.play();

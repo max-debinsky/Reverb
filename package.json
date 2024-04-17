@@ -17,6 +17,7 @@
     "discord.js": "^14.14.1",
     "dotenv": "^16.4.5",
     "node-pre-gyp": "^0.17.0",
+    "react-dev-utils": "^10.0.0",
     "rebuild": "^0.1.2"
   }
 }
